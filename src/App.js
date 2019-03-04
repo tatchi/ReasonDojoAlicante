@@ -11,6 +11,13 @@ var ReasonReact = require("reason-react/src/ReasonReact.js");
 
 var component = ReasonReact.reducerComponent("App");
 
+var initialState = /* record */[
+  /* status : NotStarted */1,
+  /* score */0,
+  /* activeMole */undefined,
+  /* clickedMole */undefined
+];
+
 function make(_children) {
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -30,35 +37,80 @@ function make(_children) {
                               className: "game"
                             }, match ? ReasonReact.element(undefined, undefined, Button.make("Start Game!", (function (param) {
                                           return Curry._1(self[/* send */3], /* Start */0);
-                                        }), /* array */[])) : ReasonReact.element(undefined, undefined, Board.make(self[/* state */1][/* activeMole */1], /* array */[]))));
+                                        }), /* array */[])) : React.createElement(React.Fragment, undefined, "score: " + String(self[/* state */1][/* score */1]), React.createElement("button", {
+                                        onClick: (function (param) {
+                                            return Curry._1(self[/* send */3], /* Reset */1);
+                                          })
+                                      }, "reset"), React.createElement("button", {
+                                        onClick: (function (param) {
+                                            return Curry._1(self[/* send */3], /* Stop */2);
+                                          })
+                                      }, "stop"), ReasonReact.element(undefined, undefined, Board.make(self[/* state */1][/* activeMole */2], (function (index) {
+                                              return Curry._1(self[/* send */3], /* Hit */Block.__(1, [index]));
+                                            }), /* array */[])))));
             }),
           /* initialState */(function (param) {
-              return /* record */[
-                      /* status : NotStarted */1,
-                      /* activeMole */0
-                    ];
+              return initialState;
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
-              if (action) {
+              if (typeof action === "number") {
+                switch (action) {
+                  case 0 : 
+                      return /* UpdateWithSideEffects */Block.__(2, [
+                                /* record */[
+                                  /* status : Started */0,
+                                  /* score */state[/* score */1],
+                                  /* activeMole */undefined,
+                                  /* clickedMole */undefined
+                                ],
+                                (function (self) {
+                                    var intervalId = setInterval((function (param) {
+                                            var randomInt = Js_math.random_int(0, 9);
+                                            return Curry._1(self[/* send */3], /* ChangeActiveMole */Block.__(0, [randomInt]));
+                                          }), 1000);
+                                    return Curry._1(self[/* onUnmount */4], (function (param) {
+                                                  clearInterval(intervalId);
+                                                  return /* () */0;
+                                                }));
+                                  })
+                              ]);
+                  case 1 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* status */state[/* status */0],
+                                  /* score */0,
+                                  /* activeMole */undefined,
+                                  /* clickedMole */undefined
+                                ]]);
+                  case 2 : 
+                      return /* Update */Block.__(0, [initialState]);
+                  
+                }
+              } else if (action.tag) {
+                var index = action[0];
+                var match = state[/* activeMole */2];
+                if (match !== undefined) {
+                  var match$1 = match === index;
+                  if (match$1) {
+                    return /* Update */Block.__(0, [/* record */[
+                                /* status */state[/* status */0],
+                                /* score */state[/* score */1] + 1 | 0,
+                                /* activeMole */undefined,
+                                /* clickedMole */index
+                              ]]);
+                  } else {
+                    return /* NoUpdate */0;
+                  }
+                } else {
+                  return /* NoUpdate */0;
+                }
+              } else {
                 return /* Update */Block.__(0, [/* record */[
                             /* status */state[/* status */0],
-                            /* activeMole */action[0]
+                            /* score */state[/* score */1],
+                            /* activeMole */action[0],
+                            /* clickedMole */undefined
                           ]]);
-              } else {
-                return /* UpdateWithSideEffects */Block.__(2, [
-                          /* record */[
-                            /* status : Started */0,
-                            /* activeMole */state[/* activeMole */1]
-                          ],
-                          (function (self) {
-                              setInterval((function (param) {
-                                      var randomInt = Js_math.random_int(0, 9);
-                                      return Curry._1(self[/* send */3], /* ChangeActiveMole */[randomInt]);
-                                    }), 1000);
-                              return /* () */0;
-                            })
-                        ]);
               }
             }),
           /* jsElementWrapped */component[/* jsElementWrapped */13]
@@ -66,5 +118,6 @@ function make(_children) {
 }
 
 exports.component = component;
+exports.initialState = initialState;
 exports.make = make;
 /* component Not a pure module */
