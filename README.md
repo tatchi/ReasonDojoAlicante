@@ -52,7 +52,10 @@ let component = ReasonReact.statelessComponent("Button");
 
 - Implement the following api: `<Button text="Start game!" />`
 
+**TODO: We should indicate to render the button within the app.re**
+
 ```reason
+
 /* Button.re */
 let make = (~text, _children) => {
     ...component,
@@ -64,6 +67,8 @@ let make = (~text, _children) => {
 ```
 
 - Add an `onClick` handler that logs `start`
+
+**Todo: Js.log ?**
 
 ### 2. Build a static version of the board
 
